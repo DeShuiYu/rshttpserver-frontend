@@ -1,3 +1,3 @@
-= rshttpserver-frontend
+# rshttpserver-frontend
 
 ![](docs/ui.png)
