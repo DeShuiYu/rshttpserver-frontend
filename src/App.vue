@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppNavBar from "@/components/AppNavBar.vue";
 import AppBreadCrumb from "@/components/AppBreadCrumb.vue";
-import {computed, ref, watch} from "vue";
+import { ref, watch} from "vue";
 import AppCreateFolder from "@/components/AppCreateFolder.vue";
 import AppUploadFiles from "@/components/AppUploadFiles.vue";
 import 'vue-sonner/style.css'
@@ -15,13 +15,14 @@ const entriesData = ref([])
 
 
 function refreshEntryInfo(path: string) {
+  console.log(path);
   const url = `/api/info/${rootPath.value?.trim() ? rootPath.value.trim() + '/' : ''}`
   fetch(url, {
     method: "GET",
   })
       .then(res => res.json())
       .then(data => {
-        entriesData.value = data.data.map((item, index) => ({
+        entriesData.value = data.data.map((item:any ,index:number) => ({
           id: index + 1,                    // 通常从 1 开始，或者用 item.id 更好
           ename: item.ename,
           eaccessed: item.eaccessed,
@@ -41,7 +42,7 @@ function refreshEntryInfo(path: string) {
 }
 
 watch(() => rootPath, (newValue) => {
-  refreshEntryInfo(newValue)
+  refreshEntryInfo(newValue.value);
 }, {immediate: true});
 
 </script>

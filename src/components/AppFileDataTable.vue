@@ -19,7 +19,6 @@ import {formatTimestamp} from "@/lib/utils.ts";
 import {Button} from "@/components/ui/button";
 import {Folder, File, FolderSymlink} from 'lucide-vue-next';
 import {toast} from "vue-sonner";
-import path from "node:path";
 
 const props = defineProps<{
   data: any[],
@@ -48,19 +47,19 @@ function handleDelete(index: number, path: string) {
         toast.success(data.message)
       })
       .catch(e => toast.error(e))
-  emits('update:data', props.data.toSpliced(index, 1))
+  emits('update:data',( props.data)?.toSpliced(index, 1))
 }
 
 function handleFolderName(path: string) {
   // emits("update:rootpath",cepath)
-  const url = `/api/info/${path.trim() ? path.trim() : ''}`
+  // const url = `/api/info/${path.trim() ? path.trim() : ''}`
   emits("update:rootpath",path)
   props.refreshEntryInfo(path)
 }
-function handleDownloadFile(path: string) {
-  const url = `/api/download/${path.trim() ? path.trim() : ''}`
-  console.log("handleDownloadFile:",url)
-}
+// function handleDownloadFile(path: string) {
+//   const url = `/api/download/${path.trim() ? path.trim() : ''}`
+//   console.log("handleDownloadFile:",url)
+// }
 
 const columns: ColumnDef<any>[] = [
   {
@@ -83,9 +82,9 @@ const columns: ColumnDef<any>[] = [
         return h('div', {
           class: 'text-left font-medium flex flex-row gap-1 hover:underline',
           onClick: () => {
-            handleFolderName(cepath)
+            handleFolderName(cepath as string)
           },
-        }, [h(Folder, {class: "size-6"}), cename])
+        }, [h(Folder, {class: "size-6"}), cename as string])
       } else if (cetype === 'f') {
         return h('a', {
           class: 'text-left font-medium flex flex-row gap-1 hover:underline',
@@ -95,18 +94,18 @@ const columns: ColumnDef<any>[] = [
           onClick: (e: Event) => {
             e.stopPropagation()  // 防止触发行点击事件
           },
-        }, [h(File, {class: "size-6"}), cename])
+        }, [h(File, {class: "size-6"}), cename as string])
       } else if (cetype === 'l') {
         return h('div', {
           class: 'text-left font-medium flex flex-row gap-1 hover:underline',
           onClick: () => {
-            handleFolderName(cepath)
+            handleFolderName(cepath as string)
           },
-        }, [h(FolderSymlink, {class: "size-6"}), cename])
+        }, [h(FolderSymlink, {class: "size-6"}), cename as string])
       }else{
         return h('div', {
           class: 'text-left font-medium flex flex-row gap-1 ',
-        }, cename)
+        }, cename as string)
       }
     },
   },
@@ -129,7 +128,7 @@ const columns: ColumnDef<any>[] = [
     header: ()=>h('div', {class: 'text-center font-medium'}, "Size"),
     cell: ({row}) => {
       const cesize = row.getValue('esize')
-      return h('div', {class: 'text-center font-medium'}, cesize)
+      return h('div', {class: 'text-center font-medium'}, cesize as string)
     },
   },
   {
@@ -161,7 +160,7 @@ const columns: ColumnDef<any>[] = [
     header: "Path",
     cell: ({row}) => {
       const epath = row.getValue('epath')
-      return h('div', {class: 'text-left font-medium'}, epath)
+      return h('div', {class: 'text-left font-medium'}, epath as string)
     },
   },
   {
@@ -172,7 +171,7 @@ const columns: ColumnDef<any>[] = [
       const cindex = row.index;
       return h(Button, {
         variant: "destructive",
-        onClick: () => handleDelete(cindex, cepath),
+        onClick: () => handleDelete(cindex, cepath as string),
       }, "Del")
     }
   }
@@ -200,7 +199,7 @@ const table = useVueTable({
                      :key="header.id"
                      :class="[
               // 动态应用固定样式
-              header.column.columnDef.meta?.fixed
+              (header.column.columnDef.meta as any)?.fixed
                 ? 'sticky left-0 z-20 bg-background hover:bg-gray-50'
                 : ''
             ]"
@@ -222,7 +221,7 @@ const table = useVueTable({
                        :key="cell.id"
                        :class="[
               // 动态应用固定样式（与 header 一致）
-              cell.column.columnDef.meta?.fixed
+              (cell.column.columnDef.meta as any)?.fixed
                 ? 'sticky left-0 z-10 bg-background hover:bg-gray-50'
                 : ''
             ]"
